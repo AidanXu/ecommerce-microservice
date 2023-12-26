@@ -13,11 +13,11 @@ services:
     volumes:
       - ./users-microservice/src:/usr/src/app/src
     command: npm run start:dev
-  payments_microservice:
-    build: ./payments-microservice
-    volumes:
-      - ./payments-microservice/src:/usr/src/app/src
-    command: npm run start:dev
+  # payments_microservice:
+  #   build: ./payments-microservice
+  #   volumes:
+  #     - ./payments-microservice/src:/usr/src/app/src
+  #   command: npm run start:dev
   nats:
     image: nats
     ports:
@@ -27,7 +27,7 @@ services:
     ports:
       - "3307:3307"
     environment:
-      - MYSQL_ROOT_PASSWORD=lol
+      - MYSQL_ROOT_PASSWORD=itsovar9000
       - MYSQL_DATABASE=nestjs_db
       - MYSQL_USER=testuser
       - MYSQL_PASSWORD=testuser123

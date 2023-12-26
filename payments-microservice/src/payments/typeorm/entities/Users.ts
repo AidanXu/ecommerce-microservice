@@ -1,5 +1,5 @@
-import { Payment } from './Payment';
 import { Column, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Payment } from "./Payment";
 
 @Entity({name: 'users'})
 export class User  {
@@ -11,6 +11,9 @@ export class User  {
 
     @Column({ nullable: false })
     email: string;
+
+    @Column({nullable: false})
+    password: string;
 
     @Column({ nullable: true })
     displayName?: string;
