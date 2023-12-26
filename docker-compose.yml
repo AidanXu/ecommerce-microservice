@@ -27,7 +27,7 @@ services:
     ports:
       - "3307:3307"
     environment:
-      - MYSQL_ROOT_PASSWORD=itsovar9000
+      - MYSQL_ROOT_PASSWORD=lol
       - MYSQL_DATABASE=nestjs_db
       - MYSQL_USER=testuser
       - MYSQL_PASSWORD=testuser123
