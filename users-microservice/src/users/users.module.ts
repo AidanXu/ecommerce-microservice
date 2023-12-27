@@ -10,7 +10,7 @@ import { JwtModule } from '@nestjs/jwt';
     imports: [
         TypeOrmModule.forFeature([User, Payment]),
         JwtModule.register({
-            secret: 'xdd123', // remove this later
+            secret: process.env.JWT_SECRET, // defined in docker-compose
           }),
     ],
     controllers: [UsersMicroserviceController],

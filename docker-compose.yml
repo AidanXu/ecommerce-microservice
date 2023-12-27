@@ -13,11 +13,20 @@ services:
     volumes:
       - ./users-microservice/src:/usr/src/app/src
     command: npm run start:dev
+    environment:
+      - JWT_SECRET="xdd123"
   # payments_microservice:
   #   build: ./payments-microservice
   #   volumes:
   #     - ./payments-microservice/src:/usr/src/app/src
   #   command: npm run start:dev
+  products_microservice:
+    build: ./product-microservice
+    volumes:
+      - ./product-microservice/src:/usr/src/app/src
+    command: npm run start:dev
+    environment:
+      - JWT_SECRET="xdd123"
   nats:
     image: nats
     ports:
@@ -27,7 +36,7 @@ services:
     ports:
       - "3307:3307"
     environment:
-      - MYSQL_ROOT_PASSWORD=itsovar9000
+      - MYSQL_ROOT_PASSWORD=lol
       - MYSQL_DATABASE=nestjs_db
       - MYSQL_USER=testuser
       - MYSQL_PASSWORD=testuser123
