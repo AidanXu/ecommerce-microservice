@@ -1,5 +1,8 @@
+import { cartModule } from './cart/cart.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Cart } from './typeorm/entities/Cart';
+import { CartItem } from './typeorm/entities/CartItem';
 
 @Module({
   imports: [
@@ -8,11 +11,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       host: 'mysql_db',
       port: 3307,
       database: 'nestjs_db',
-      entities: [],
+      entities: [Cart, CartItem],
       synchronize: true,
       username: 'testuser',
       password: 'testuser123',
     }),
+    cartModule,
   ],
   controllers: [],
   providers: [],

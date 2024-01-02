@@ -1,4 +1,58 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Inject } from '@nestjs/common';
+import {
+  ClientProxy,
+  EventPattern,
+  MessagePattern,
+  Payload,
+} from '@nestjs/microservices';
+import { CartService } from './cart.service';
+import { JwtService } from '@nestjs/jwt';
+import { AddItemDto } from './dtos/AddItem.dto';
 
 @Controller('cart')
-export class CartController {}
+export class CartController {
+  constructor(
+    private cartService: CartService,
+    private jwtService: JwtService,
+    @Inject('NATS_SERVICE') private natsClient: ClientProxy,
+  ) {}
+
+  @EventPattern('newUser')
+  createCart(@Payload() data: any) {
+    return this.cartService.addCart(data.id);
+  }
+
+  @MessagePattern({ cmd: 'addItem' })
+  async addItem(@Payload() data: { addItemDto: AddItemDto; token: string }) {
+    const { addItemDto, token } = data;
+    try {
+      const clean = token.startsWith('Bearer ') ? token.slice(7) : token;
+      const decode = this.jwtService.verify(clean, {
+        secret: process.env.JWT_SECRET,
+      });
+      const userId = decode.sub;
+      const newItem = await this.cartService.addItem(
+        addItemDto.productId,
+        userId,
+        addItemDto.quantity,
+      );
+      this.natsClient.emit('newItemInCart', {
+        productId: addItemDto.productId,
+        quantity: addItemDto.quantity,
+        userId: userId,
+      });
+      return newItem;
+    } catch (error) {
+      return {
+        data: null,
+        error: error.message || 'Unknown error occurred',
+        code: 400,
+      };
+    }
+  }
+
+  @EventPattern('itemPriceFound')
+  async updateTotalPrice(data: any) {
+    await this.cartService.updateTotalPrice(data.userId, data.totalPrice);
+  }
+}

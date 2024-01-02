@@ -1,24 +1,23 @@
-import { Column, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Payment } from "./Payment";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Payment } from './Payment';
 
-@Entity({name: 'users'})
-export class User  {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+@Entity({ name: 'users' })
+export class User {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @Column({ nullable: false })
-    username: string;
+  @Column({ nullable: false })
+  username: string;
 
-    @Column({ nullable: false })
-    email: string;
+  @Column({ nullable: false })
+  email: string;
 
-    @Column({ nullable: false })
-    password: string;
+  @Column({ nullable: false })
+  password: string;
 
-    @Column({ nullable: true })
-    displayName?: string;
+  @Column({ nullable: true })
+  displayName?: string;
 
-    @OneToMany(() => Payment, (payment) => payment.user)
-    @JoinColumn()
-    payments: Payment[];
+  @OneToMany(() => Payment, (payment) => payment.user)
+  payments: Payment[];
 }

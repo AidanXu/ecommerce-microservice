@@ -2,7 +2,7 @@ services:
   api_gateway:
     build: ./http-api-gateway
     ports:
-      - "3000:3000"
+      - '3000:3000'
     volumes:
       - ./http-api-gateway/src:/usr/src/app/src
     command: npm run start:dev
@@ -15,11 +15,6 @@ services:
     command: npm run start:dev
     environment:
       - JWT_SECRET="xdd123"
-  # payments_microservice:
-  #   build: ./payments-microservice
-  #   volumes:
-  #     - ./payments-microservice/src:/usr/src/app/src
-  #   command: npm run start:dev
   products_microservice:
     build: ./product-microservice
     volumes:
@@ -27,6 +22,18 @@ services:
     command: npm run start:dev
     environment:
       - JWT_SECRET="xdd123"
+  cart_microservice:
+    build: ./cart-microservice
+    volumes:
+      - ./cart-microservice/src:/usr/src/app/src
+    command: npm run start:dev
+    environment:
+      - JWT_SECRET="xdd123"
+  # payments_microservice:
+  #   build: ./payments-microservice
+  #   volumes:
+  #     - ./payments-microservice/src:/usr/src/app/src
+  #   command: npm run start:dev
   nats:
     image: nats
     ports:
@@ -34,7 +41,7 @@ services:
   mysql_db:
     image: mysql
     ports:
-      - "3307:3307"
+      - '3307:3307'
     environment:
       - MYSQL_ROOT_PASSWORD=lol
       - MYSQL_DATABASE=nestjs_db
