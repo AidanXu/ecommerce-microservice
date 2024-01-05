@@ -31,7 +31,7 @@ export class CartService {
     // Find given userId
     let cart = await this.cartRepository.findOne({ where: { userId: userId } });
 
-    // Find if product exists in user's cart
+    // Find products in user's cart
     let userCartItems = await this.cartItemRepository.find({
       where: {
         cart: { userId: userId },
@@ -64,6 +64,32 @@ export class CartService {
     return newItem;
   }
 
-  // assume remove all
-  async removeItem(productId: string, userId: string) {}
+  // Update quantity of given item (+1 or -1)
+  async updateQuantity(productId: string, userId: string, change: boolean) {
+    // Find given userId
+    let cart = await this.cartRepository.findOne({ where: { userId: userId } });
+
+    // Find products in user's cart
+    let userCartItems = await this.cartItemRepository.find({
+      where: {
+        cart: { userId: userId },
+      },
+    });
+
+    // Update item total
+    change ? cart.totalItems++ : cart.totalItems--;
+    await this.cartRepository.save(cart);
+
+    for (let cartItem of userCartItems) {
+      if (cartItem.productId == productId) {
+        cartItem.quantity += change ? 1 : -1;
+        if (cartItem.quantity == 0) {
+          await this.cartItemRepository.delete({ userId, productId });
+        } else {
+          await this.cartItemRepository.save(cartItem);
+        }
+        return cartItem;
+      }
+    }
+  }
 }

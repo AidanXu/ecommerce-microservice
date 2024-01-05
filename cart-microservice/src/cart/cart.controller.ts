@@ -51,6 +51,35 @@ export class CartController {
     }
   }
 
+  @MessagePattern({ cmd: 'updateQuantity' })
+  async updateQuantity(data: { updateQuantityDto: any; token: string }) {
+    const { updateQuantityDto, token } = data;
+    try {
+      const clean = token.startsWith('Bearer ') ? token.slice(7) : token;
+      const decode = this.jwtService.verify(clean, {
+        secret: process.env.JWT_SECRET,
+      });
+      const userId = decode.sub;
+      const newQuantity = await this.cartService.updateQuantity(
+        updateQuantityDto.productId,
+        userId,
+        updateQuantityDto.change,
+      );
+      this.natsClient.emit('newItemInCart', {
+        productId: updateQuantityDto.productId,
+        quantity: updateQuantityDto.change ? 1 : -1,
+        userId: userId,
+      });
+      return newQuantity;
+    } catch (error) {
+      return {
+        data: null,
+        error: error.message || 'Unknown error ocurred',
+        code: 400,
+      };
+    }
+  }
+
   @EventPattern('itemPriceFound')
   async updateTotalPrice(data: any) {
     await this.cartService.updateTotalPrice(data.userId, data.totalPrice);

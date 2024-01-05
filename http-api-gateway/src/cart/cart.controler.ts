@@ -11,6 +11,7 @@ import {
 import { ClientProxy } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
 import { AddItemDto } from './dtos/AddItem.dto';
+import { UpdateQuantityDto } from './dtos/UpdateQuantity.dto';
 
 @Controller('cart')
 export class CartController {
@@ -21,6 +22,26 @@ export class CartController {
     const token = request.headers.authorization;
     const response = await lastValueFrom(
       this.natsClient.send({ cmd: 'addItem' }, { addItemDto, token }),
+    );
+
+    if (response.error) {
+      throw new HttpException(response.error, HttpStatus.BAD_REQUEST);
+    }
+
+    return response;
+  }
+
+  @Post('/updateQuantity')
+  async updateQuantity(
+    @Req() request,
+    @Body() updateQuantityDto: UpdateQuantityDto,
+  ) {
+    const token = request.headers.authorization;
+    const response = await lastValueFrom(
+      this.natsClient.send(
+        { cmd: 'updateQuantity' },
+        { updateQuantityDto, token },
+      ),
     );
 
     if (response.error) {
