@@ -92,4 +92,19 @@ export class CartService {
       }
     }
   }
+
+  // Send current cart to orders
+  async getCartItems(userId: string) {
+    // Find given userId
+    let cart = await this.cartRepository.findOne({ where: { userId: userId } });
+
+    // Find products in user's cart
+    let userCartItems = await this.cartItemRepository.find({
+      where: {
+        cart: { userId: userId },
+      },
+    });
+
+    return userCartItems;
+  }
 }

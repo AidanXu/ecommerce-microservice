@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpException,
   HttpStatus,
   Inject,
@@ -41,6 +42,26 @@ export class CartController {
       this.natsClient.send(
         { cmd: 'updateQuantity' },
         { updateQuantityDto, token },
+      ),
+    );
+
+    if (response.error) {
+      throw new HttpException(response.error, HttpStatus.BAD_REQUEST);
+    }
+
+    return response;
+  }
+
+  // TODO: make this emit event to orders with cart info after verifying token
+  @Get('/checkout')
+  async checkout(@Req() request) {
+    const token = request.headers.authorization;
+    const response = await lastValueFrom(
+      this.natsClient.send(
+        {
+          cmd: 'checkout',
+        },
+        { token },
       ),
     );
 

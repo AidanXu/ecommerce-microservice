@@ -4,9 +4,16 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { UsersModule } from './users/user.module';
 import { ProductsModule } from './products/products.module';
 import { CartModule } from './cart/cart.module';
+import { OrdersModule } from './orders/orders.module';
 
 @Module({
-  imports: [UsersModule, PaymentsModule, ProductsModule, CartModule],
+  imports: [
+    UsersModule,
+    PaymentsModule,
+    ProductsModule,
+    CartModule,
+    OrdersModule,
+  ],
   controllers: [],
   providers: [],
 })

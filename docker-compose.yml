@@ -2,12 +2,12 @@ services:
   api_gateway:
     build: ./http-api-gateway
     ports:
-      - '3000:3000'
+      - '4000:4000'
     volumes:
       - ./http-api-gateway/src:/usr/src/app/src
     command: npm run start:dev
     environment:
-      - PORT=3000
+      - PORT=4000
   users_microservice:
     build: ./users-microservice
     volumes:
@@ -26,6 +26,13 @@ services:
     build: ./cart-microservice
     volumes:
       - ./cart-microservice/src:/usr/src/app/src
+    command: npm run start:dev
+    environment:
+      - JWT_SECRET="xdd123"
+  orders_microservice:
+    build: ./orders_microservice
+    volumes:
+      - ./orders-microservice/src:/usr/src/app/src
     command: npm run start:dev
     environment:
       - JWT_SECRET="xdd123"
