@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Get,
   HttpException,
   HttpStatus,
   Inject,
@@ -13,6 +12,7 @@ import { ClientProxy } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
 import { AddItemDto } from './dtos/AddItem.dto';
 import { UpdateQuantityDto } from './dtos/UpdateQuantity.dto';
+import { CheckoutDto } from './dtos/Checkout.dto';
 
 @Controller('cart')
 export class CartController {
@@ -53,15 +53,15 @@ export class CartController {
   }
 
   // TODO: make this emit event to orders with cart info after verifying token
-  @Get('/checkout')
-  async checkout(@Req() request) {
+  @Post('/checkout')
+  async checkout(@Req() request, @Body() checkoutDto: CheckoutDto) {
     const token = request.headers.authorization;
     const response = await lastValueFrom(
       this.natsClient.send(
         {
           cmd: 'checkout',
         },
-        { token },
+        { checkoutDto, token },
       ),
     );
 

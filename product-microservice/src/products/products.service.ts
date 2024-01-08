@@ -30,6 +30,6 @@ export class ProductsService {
         productId: productId,
       },
     });
-    return quantity * prod.price;
+    return { totalPrice: quantity * prod.price, unitPrice: prod.price };
   }
 }

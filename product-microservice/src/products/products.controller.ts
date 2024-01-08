@@ -75,12 +75,14 @@ export class ProductsController {
 
   @EventPattern('newItemInCart')
   async getProductPricing(data: any) {
-    const totalPrice = await this.productsService.getTotalPrice(
+    const { totalPrice, unitPrice } = await this.productsService.getTotalPrice(
       data.productId,
       data.quantity,
     );
     this.natsClient.emit('itemPriceFound', {
       totalPrice: totalPrice,
+      unitPrice: unitPrice,
+      productId: data.productId,
       userId: data.userId,
     });
   }

@@ -82,19 +82,35 @@ export class CartController {
 
   @EventPattern('itemPriceFound')
   async updateTotalPrice(data: any) {
+    await this.cartService.updateUnitPrice(
+      data.userId,
+      data.unitPrice,
+      data.productId,
+    );
     await this.cartService.updateTotalPrice(data.userId, data.totalPrice);
   }
 
   @MessagePattern({ cmd: 'checkout' })
-  async checkout(data: { token: string }) {
-    const { token } = data;
+  async checkout(data: { token: string; checkoutDto: any }) {
+    const { token, checkoutDto } = data;
     const clean = token.startsWith('Bearer ') ? token.slice(7) : token;
     const decode = this.jwtService.verify(clean, {
       secret: process.env.JWT_SECRET,
     });
     const userId = decode.sub;
     const userCartItems = await this.cartService.getCartItems(userId);
-    this.natsClient.emit('checkoutCart', userCartItems);
-    return userCartItems;
+    this.natsClient.emit('checkoutCart', {
+      userCartItems: userCartItems.userCartItems,
+      totalCost: userCartItems.totalCost,
+      checkoutDto: checkoutDto,
+    });
+    if (userCartItems) return userCartItems;
+    else {
+      return {
+        data: null,
+        error: 'Cart Empty',
+        code: 404,
+      };
+    }
   }
 }

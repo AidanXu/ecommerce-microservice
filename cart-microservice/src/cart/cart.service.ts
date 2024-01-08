@@ -21,10 +21,25 @@ export class CartService {
     return newCart;
   }
 
+  async updateUnitPrice(
+    userId: string,
+    newItemPrice: number,
+    productId: string,
+  ) {
+    let userItem = await this.cartItemRepository.find({
+      where: {
+        cart: { userId: userId },
+        productId: productId,
+      },
+    });
+    userItem[0].unitPrice = newItemPrice;
+    await this.cartItemRepository.save(userItem);
+  }
+
   async updateTotalPrice(userId: string, newItemsPrice: number) {
     let cart = await this.cartRepository.findOne({ where: { userId: userId } });
     cart.totalCost += newItemsPrice;
-    this.cartRepository.save(cart);
+    await this.cartRepository.save(cart);
   }
 
   async addItem(productId: string, userId: string, quantity: number) {
@@ -105,6 +120,6 @@ export class CartService {
       },
     });
 
-    return userCartItems;
+    return { userCartItems: userCartItems, totalCost: cart.totalCost };
   }
 }

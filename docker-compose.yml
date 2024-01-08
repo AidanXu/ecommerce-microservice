@@ -29,10 +29,10 @@ services:
     command: npm run start:dev
     environment:
       - JWT_SECRET="xdd123"
-  order_microservice:
-    build: ./order_microservice
+  orders-microservice:
+    build: ./orders-microservice
     volumes:
-      - ./order-microservice/src:/usr/src/app/src
+      - ./orders-microservice/src:/usr/src/app/src
     command: npm run start:dev
     environment:
       - JWT_SECRET="xdd123"

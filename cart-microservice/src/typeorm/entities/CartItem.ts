@@ -15,4 +15,7 @@ export class CartItem {
 
   @Column()
   quantity: number;
+
+  @Column('float')
+  unitPrice: number;
 }
