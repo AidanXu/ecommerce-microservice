@@ -122,4 +122,50 @@ export class CartService {
 
     return { userCartItems: userCartItems, totalCost: cart.totalCost };
   }
+
+  // Delete all items in cart
+  async clearCart(userId: string) {
+    // Find given userId
+    let cart = await this.cartRepository.findOne({ where: { userId: userId } });
+
+    // Find products in user's cart
+    let userCartItems = await this.cartItemRepository.find({
+      where: {
+        cart: { userId: userId },
+      },
+    });
+
+    // Delete all items in cart
+    for (let cartItem of userCartItems) {
+      await this.cartItemRepository.delete({
+        userId,
+        productId: cartItem.productId,
+      });
+    }
+
+    // Reset cart total
+    cart.totalItems = 0;
+    cart.totalCost = 0;
+    await this.cartRepository.save(cart);
+  }
+
+  // Get items in cart
+  async getCart(userId: string) {
+    // Find given userId
+    let cart = await this.cartRepository.findOne({ where: { userId: userId } });
+    // Find products in user's cart
+    let userCartItems = await this.cartItemRepository.find({
+      where: {
+        cart: { userId: userId },
+      },
+    });
+
+    // Remove userId from cart and userCartItems
+    if (cart) {
+      delete cart.userId;
+    }
+    userCartItems.forEach((item) => delete item.userId);
+
+    return { cart, userCartItems };
+  }
 }

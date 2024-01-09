@@ -16,6 +16,6 @@ export class CartItem {
   @Column()
   quantity: number;
 
-  @Column('float')
+  @Column('float', { default: 0 })
   unitPrice: number;
 }

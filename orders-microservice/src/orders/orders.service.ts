@@ -42,4 +42,21 @@ export class OrdersService {
 
     return newOrder;
   }
+
+  async getOrders(userId: string) {
+    const orders = await this.orderRepository.find({
+      where: { userId: userId },
+      relations: ['orderItems'],
+    });
+
+    // Remove orderId from each orderItem
+    orders.forEach((order) => {
+      order.orderItems = order.orderItems.map((item) => {
+        delete item.orderId;
+        return item;
+      });
+    });
+
+    return orders;
+  }
 }

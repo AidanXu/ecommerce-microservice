@@ -113,4 +113,37 @@ export class CartController {
       };
     }
   }
+
+  @MessagePattern({ cmd: 'getCart' })
+  async getCart(data: { token: string }) {
+    const { token } = data;
+    try {
+      const clean = token.startsWith('Bearer ') ? token.slice(7) : token;
+      const decode = this.jwtService.verify(clean, {
+        secret: process.env.JWT_SECRET,
+      });
+      const userId = decode.sub;
+      const cart = await this.cartService.getCart(userId);
+      if (cart) {
+        return cart;
+      } else {
+        return {
+          data: null,
+          error: 'Cart Empty',
+          code: 404,
+        };
+      }
+    } catch (error) {
+      return {
+        data: null,
+        error: error.message || 'Unknown error ocurred',
+        code: 400,
+      };
+    }
+  }
+
+  @EventPattern('newOrder')
+  async clearCart(data: any) {
+    await this.cartService.clearCart(data.userId);
+  }
 }

@@ -5,6 +5,7 @@ import { OrdersService } from './orders.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Orders } from 'src/typeorm/entities/OrderInfo';
 import { OrderItem } from 'src/typeorm/entities/OrderItem';
+import { NatsClientModule } from 'src/nats-client/nats-client.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { OrderItem } from 'src/typeorm/entities/OrderItem';
     JwtModule.register({
       secret: process.env.JWT_SECRET,
     }),
+    NatsClientModule,
   ],
   controllers: [OrdersController],
   providers: [OrdersService],
